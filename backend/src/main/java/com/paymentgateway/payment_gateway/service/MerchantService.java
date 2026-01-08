@@ -23,7 +23,8 @@ public class MerchantService {
         
         if (!merchantRepository.existsByEmail(testEmail)) {
             Merchant testMerchant = new Merchant();
-            testMerchant.setId("55be8400-e29b-41d4-a716-446655440000");
+            // Don't set ID - let it auto-generate
+            // testMerchant.setId("55be8400-e29b-41d4-a716-446655440000");
             testMerchant.setName("Test Merchant");
             testMerchant.setEmail(testEmail);
             testMerchant.setApiKey("key_test_abc123");
