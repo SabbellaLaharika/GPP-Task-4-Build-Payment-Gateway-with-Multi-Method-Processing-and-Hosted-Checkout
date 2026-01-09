@@ -155,76 +155,6 @@ function App() {
       </div>
     );
   }
-
-  if (paymentStatus === 'success') {
-    return (
-      <div className="container">
-        <div data-test-id="success-state" className="success-container">
-          <div className="success-icon">✓</div>
-          <h2>Payment Successful!</h2>
-          <p data-test-id="payment-id">Payment ID: {paymentId}</p>
-          <p data-test-id="success-message">Your payment has been processed successfully.</p>
-          
-          {/* Add Print Receipt Button */}
-          <button
-            onClick={printReceipt}
-            style={{
-              marginTop: '20px',
-              padding: '12px 24px',
-              backgroundColor: '#28a745',
-              color: 'white',
-              border: 'none',
-              borderRadius: '8px',
-              fontSize: '16px',
-              fontWeight: '600',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              margin: '20px auto 0'
-            }}
-          >
-            🖨️ Print Receipt
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  if (paymentStatus === 'failed') {
-    return (
-      <div className="container">
-        <div data-test-id="error-state" className="error-container">
-          <div className="error-icon">✗</div>
-          <h2>Payment Failed</h2>
-          <p data-test-id="payment-id">Payment ID: {paymentId}</p>
-          <p data-test-id="error-message">Payment could not be processed. Please try again.</p>
-          <button 
-            data-test-id="retry-button"
-            onClick={() => {
-              setPaymentStatus('');
-              setPaymentId('');
-            }}
-            className="retry-button"
-          >
-            Try Again
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  if (processingPayment) {
-    return (
-      <div className="container">
-        <div data-test-id="processing-state" className="processing-container">
-          <div className="spinner"></div>
-          <h2>Processing payment...</h2>
-          <p data-test-id="processing-message">Please wait while we process your payment.</p>
-        </div>
-      </div>
-    );
-  }
   const printReceipt = () => {
     const receiptWindow = window.open('', '_blank');
     if (!receiptWindow) {
@@ -355,6 +285,76 @@ function App() {
     `);
     receiptWindow.document.close();
   };
+  if (paymentStatus === 'success') {
+    return (
+      <div className="container">
+        <div data-test-id="success-state" className="success-container">
+          <div className="success-icon">✓</div>
+          <h2>Payment Successful!</h2>
+          <p data-test-id="payment-id">Payment ID: {paymentId}</p>
+          <p data-test-id="success-message">Your payment has been processed successfully.</p>
+          
+          {/* Add Print Receipt Button */}
+          <button
+            onClick={printReceipt}
+            style={{
+              marginTop: '20px',
+              padding: '12px 24px',
+              backgroundColor: '#28a745',
+              color: 'white',
+              border: 'none',
+              borderRadius: '8px',
+              fontSize: '16px',
+              fontWeight: '600',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              margin: '20px auto 0'
+            }}
+          >
+            🖨️ Print Receipt
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (paymentStatus === 'failed') {
+    return (
+      <div className="container">
+        <div data-test-id="error-state" className="error-container">
+          <div className="error-icon">✗</div>
+          <h2>Payment Failed</h2>
+          <p data-test-id="payment-id">Payment ID: {paymentId}</p>
+          <p data-test-id="error-message">Payment could not be processed. Please try again.</p>
+          <button 
+            data-test-id="retry-button"
+            onClick={() => {
+              setPaymentStatus('');
+              setPaymentId('');
+            }}
+            className="retry-button"
+          >
+            Try Again
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (processingPayment) {
+    return (
+      <div className="container">
+        <div data-test-id="processing-state" className="processing-container">
+          <div className="spinner"></div>
+          <h2>Processing payment...</h2>
+          <p data-test-id="processing-message">Please wait while we process your payment.</p>
+        </div>
+      </div>
+    );
+  }
+  
   return (
     <div className="container" data-test-id="checkout-container">
       <div className="checkout-card">

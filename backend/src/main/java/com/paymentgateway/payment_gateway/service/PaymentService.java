@@ -16,6 +16,7 @@ import java.util.Optional;
 public class PaymentService {
 
     private final PaymentRepository paymentRepository;
+    private final OrderService orderService;
 
     @Transactional
     public Payment createPayment(Order order, Merchant merchant, String method, String vpa, 
