@@ -53,6 +53,9 @@ function App() {
       });
       
       setOrder(response.data);
+      if (response.data.status === 'paid') {
+      setError('This order has already been paid.');
+    }
     } catch (err) {
       setError('Order not found. Please check the order ID.');
       console.error('Error fetching order:', err);
@@ -376,8 +379,22 @@ function App() {
           <div className="error-message">{error}</div>
         )}
 
+        {order.status === 'paid' && (
+          <div style={{
+            padding: '20px',
+            backgroundColor: '#d4edda',
+            border: '1px solid #c3e6cb',
+            borderRadius: '8px',
+            marginTop: '20px',
+            textAlign: 'center'
+          }}>
+            <h3 style={{ color: '#155724', marginBottom: '10px' }}>✓ Order Already Paid</h3>
+            <p style={{ color: '#155724', margin: 0 }}>This order has already been successfully paid.</p>
+          </div>
+        )}
+
         {/* Payment Method Selection */}
-        {!paymentMethod && (
+        {!paymentMethod && order.status !== 'paid' && (
           <div data-test-id="payment-methods" className="payment-methods">
             <h2>Select Payment Method</h2>
             <div className="method-buttons">

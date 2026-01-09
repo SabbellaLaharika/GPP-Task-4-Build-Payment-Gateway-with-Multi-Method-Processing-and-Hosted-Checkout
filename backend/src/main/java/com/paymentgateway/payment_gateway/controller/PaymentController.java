@@ -62,6 +62,12 @@ public class PaymentController {
                         .body(new ErrorResponse("BAD_REQUEST_ERROR", "Order does not belong to merchant"));
             }
 
+            // Check if payment already exists for this order
+            List<Payment> existingPayments = paymentService.findByOrderId(order.getId());
+            if (!existingPayments.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(new ErrorResponse("PAYMENT_ALREADY_EXISTS", "Payment already exists for this order"));
+            }
             // Validate payment method
             String method = request.getMethod();
             if (!"upi".equals(method) && !"card".equals(method)) {

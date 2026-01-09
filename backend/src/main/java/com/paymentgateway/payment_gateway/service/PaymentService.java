@@ -71,10 +71,12 @@ public class PaymentService {
     public Payment finalizePayment(Payment payment, boolean success) {
         if (success) {
             payment.setStatus("success");
+            orderService.updateOrderStatus(payment.getOrder().getId(), "paid");
             payment.setErrorCode(null);
             payment.setErrorDescription(null);
         } else {
             payment.setStatus("failed");
+            orderService.updateOrderStatus(payment.getOrder().getId(), "failed");
             payment.setErrorCode("PAYMENT_FAILED");
             payment.setErrorDescription("Payment could not be processed");
         }
