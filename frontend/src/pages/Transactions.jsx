@@ -80,6 +80,165 @@ function Transactions() {
     }
   };
 
+  const printReceipt = (payment) => {
+    const receiptWindow = window.open('', '_blank');
+    if (!receiptWindow)  alert("Popup blocked! Please allow popups.");
+    receiptWindow.document.write(`
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>Transaction Receipt - ${payment.id}</title>
+        <style>
+          body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 40px auto;
+            padding: 20px;
+          }
+          .receipt-header {
+            text-align: center;
+            border-bottom: 2px solid #333;
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+          }
+          .receipt-header h1 {
+            margin: 0;
+            color: #333;
+          }
+          .receipt-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+          }
+          .receipt-row.total {
+            font-weight: bold;
+            font-size: 18px;
+            border-bottom: 2px solid #333;
+            margin-top: 10px;
+          }
+          .receipt-label {
+            color: #666;
+          }
+          .receipt-value {
+            font-weight: bold;
+            color: #333;
+          }
+          .status-success {
+            color: #28a745;
+            font-weight: bold;
+            font-size: 16px;
+          }
+          .status-failed {
+            color: #dc3545;
+            font-weight: bold;
+            font-size: 16px;
+          }
+          .status-processing {
+            color: #ffc107;
+            font-weight: bold;
+            font-size: 16px;
+          }
+          .receipt-footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #333;
+            color: #666;
+            font-size: 12px;
+          }
+          @media print {
+            body {
+              margin: 0;
+            }
+            button {
+              display: none;
+            }
+          }
+        </style>
+      </head>
+      <body>
+        <div class="receipt-header">
+          <h1>Transaction Receipt</h1>
+          <p>Payment Gateway Dashboard</p>
+        </div>
+        
+        <div class="receipt-row">
+          <span class="receipt-label">Payment ID:</span>
+          <span class="receipt-value">${payment.id}</span>
+        </div>
+        
+        <div class="receipt-row">
+          <span class="receipt-label">Order ID:</span>
+          <span class="receipt-value">${payment.order_id}</span>
+        </div>
+        
+        <div class="receipt-row">
+          <span class="receipt-label">Date & Time:</span>
+          <span class="receipt-value">${formatDate(payment.created_at)}</span>
+        </div>
+        
+        <div class="receipt-row">
+          <span class="receipt-label">Payment Method:</span>
+          <span class="receipt-value">${payment.method.toUpperCase()}</span>
+        </div>
+        
+        ${payment.method === 'upi' ? `
+          <div class="receipt-row">
+            <span class="receipt-label">UPI ID:</span>
+            <span class="receipt-value">${payment.vpa || 'N/A'}</span>
+          </div>
+        ` : ''}
+        
+        ${payment.method === 'card' ? `
+          <div class="receipt-row">
+            <span class="receipt-label">Card Network:</span>
+            <span class="receipt-value">${payment.card_network ? payment.card_network.toUpperCase() : 'N/A'}</span>
+          </div>
+          <div class="receipt-row">
+            <span class="receipt-label">Card Last 4:</span>
+            <span class="receipt-value">**** ${payment.card_last4 || 'N/A'}</span>
+          </div>
+        ` : ''}
+        
+        <div class="receipt-row total">
+          <span class="receipt-label">Amount:</span>
+          <span class="receipt-value">${formatAmount(payment.amount)}</span>
+        </div>
+        
+        <div class="receipt-row">
+          <span class="receipt-label">Status:</span>
+          <span class="status-${payment.status}">${payment.status.toUpperCase()}</span>
+        </div>
+        
+        ${payment.error_code ? `
+          <div class="receipt-row">
+            <span class="receipt-label">Error:</span>
+            <span class="receipt-value" style="color: #dc3545;">${payment.error_description || payment.error_code}</span>
+          </div>
+        ` : ''}
+        
+        <div class="receipt-footer">
+          <p>Thank you for using our payment gateway!</p>
+          <p>This is a computer-generated receipt.</p>
+          <p>Merchant: Test Merchant</p>
+          <p>Date: ${new Date().toLocaleDateString()}</p>
+        </div>
+        
+        <div style="text-align: center; margin-top: 20px;">
+          <button onclick="window.print()" style="padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px;">
+            Print Receipt
+          </button>
+          <button onclick="window.close()" style="padding: 10px 20px; background: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; margin-left: 10px;">
+            Close
+          </button>
+        </div>
+      </body>
+      </html>
+    `);
+    receiptWindow.document.close();
+  };
+
   return (
     <div style={{ minHeight: '100vh', backgroundColor: '#f5f5f5' }}>
       {/* Header */}
@@ -167,6 +326,7 @@ function Transactions() {
             </div>
           ) : (
             <div style={{ overflowX: 'auto' }}>
+
               <table 
                 data-test-id="transactions-table"
                 style={{
@@ -183,6 +343,7 @@ function Transactions() {
                     <th style={{ padding: '12px', textAlign: 'left' }}>Method</th>
                     <th style={{ padding: '12px', textAlign: 'left' }}>Status</th>
                     <th style={{ padding: '12px', textAlign: 'left' }}>Created At</th>
+                    <th style={{ padding: '12px', textAlign: 'center' }}>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -234,10 +395,47 @@ function Transactions() {
                       >
                         {formatDate(payment.created_at)}
                       </td>
+                      <td style={{ padding: '12px', textAlign: 'center' }}>
+                        <button
+                          onClick={() => printReceipt(payment)}
+                          style={{
+                            padding: '6px 12px',
+                            backgroundColor: '#28a745',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '4px',
+                            cursor: 'pointer',
+                            fontSize: '12px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '4px'
+                          }}
+                          title="Print Receipt"
+                        >
+                          🖨️ Print
+                        </button>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
+              <div style={{ marginBottom: '20px', textAlign: 'center' }}>
+                <button
+                  onClick={() => {
+                    payments.forEach(payment => printReceipt(payment));
+                  }}
+                  style={{
+                    padding: '10px 20px',
+                    backgroundColor: '#007bff',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '4px',
+                    cursor: 'pointer'
+                  }}
+                >
+                  🖨️ Print All Receipts
+                </button>
+              </div>
             </div>
           )}
         </div>

@@ -161,6 +161,28 @@ function App() {
           <h2>Payment Successful!</h2>
           <p data-test-id="payment-id">Payment ID: {paymentId}</p>
           <p data-test-id="success-message">Your payment has been processed successfully.</p>
+          
+          {/* Add Print Receipt Button */}
+          <button
+            onClick={printReceipt}
+            style={{
+              marginTop: '20px',
+              padding: '12px 24px',
+              backgroundColor: '#28a745',
+              color: 'white',
+              border: 'none',
+              borderRadius: '8px',
+              fontSize: '16px',
+              fontWeight: '600',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              margin: '20px auto 0'
+            }}
+          >
+            🖨️ Print Receipt
+          </button>
         </div>
       </div>
     );
@@ -200,7 +222,136 @@ function App() {
       </div>
     );
   }
-
+  const printReceipt = () => {
+    const receiptWindow = window.open('', '_blank');
+    if (!receiptWindow) {
+      alert("Popup blocked! Please allow popups.");
+      return;
+    }
+    receiptWindow.document.write(`
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>Payment Receipt</title>
+        <style>
+          body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 40px auto;
+            padding: 20px;
+          }
+          .receipt-header {
+            text-align: center;
+            border-bottom: 2px solid #333;
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+          }
+          .receipt-header h1 {
+            margin: 0;
+            color: #333;
+          }
+          .receipt-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+          }
+          .receipt-row.total {
+            font-weight: bold;
+            font-size: 18px;
+            border-bottom: 2px solid #333;
+            margin-top: 10px;
+          }
+          .receipt-label {
+            color: #666;
+          }
+          .receipt-value {
+            font-weight: bold;
+            color: #333;
+          }
+          .status-success {
+            color: #28a745;
+            font-weight: bold;
+            font-size: 16px;
+          }
+          .status-failed {
+            color: #dc3545;
+            font-weight: bold;
+            font-size: 16px;
+          }
+          .receipt-footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #333;
+            color: #666;
+            font-size: 12px;
+          }
+          @media print {
+            body {
+              margin: 0;
+            }
+            button {
+              display: none;
+            }
+          }
+        </style>
+      </head>
+      <body>
+        <div class="receipt-header">
+          <h1>Payment Receipt</h1>
+          <p>Payment Gateway Demo</p>
+        </div>
+        
+        <div class="receipt-row">
+          <span class="receipt-label">Payment ID:</span>
+          <span class="receipt-value">${paymentId}</span>
+        </div>
+        
+        <div class="receipt-row">
+          <span class="receipt-label">Order ID:</span>
+          <span class="receipt-value">${orderId}</span>
+        </div>
+        
+        <div class="receipt-row">
+          <span class="receipt-label">Date & Time:</span>
+          <span class="receipt-value">${new Date().toLocaleString()}</span>
+        </div>
+        
+        <div class="receipt-row">
+          <span class="receipt-label">Payment Method:</span>
+          <span class="receipt-value">${paymentMethod.toUpperCase()}</span>
+        </div>
+        
+        <div class="receipt-row total">
+          <span class="receipt-label">Amount Paid:</span>
+          <span class="receipt-value">₹${(order.amount / 100).toFixed(2)}</span>
+        </div>
+        
+        <div class="receipt-row">
+          <span class="receipt-label">Status:</span>
+          <span class="status-${paymentStatus}">${paymentStatus.toUpperCase()}</span>
+        </div>
+        
+        <div class="receipt-footer">
+          <p>Thank you for your payment!</p>
+          <p>This is a computer-generated receipt.</p>
+          <p>Date: ${new Date().toLocaleDateString()}</p>
+        </div>
+        
+        <div style="text-align: center; margin-top: 20px;">
+          <button onclick="window.print()" style="padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px;">
+            Print Receipt
+          </button>
+          <button onclick="window.close()" style="padding: 10px 20px; background: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; margin-left: 10px;">
+            Close
+          </button>
+        </div>
+      </body>
+      </html>
+    `);
+    receiptWindow.document.close();
+  };
   return (
     <div className="container" data-test-id="checkout-container">
       <div className="checkout-card">
