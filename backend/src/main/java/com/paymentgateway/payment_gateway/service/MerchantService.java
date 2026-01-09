@@ -21,20 +21,27 @@ public class MerchantService {
     public void seedTestMerchant() {
         String testEmail = "test@example.com";
         
-        if (!merchantRepository.existsByEmail(testEmail)) {
+        // Check if test merchant already exists
+        Optional<Merchant> existingMerchant = merchantRepository.findByEmail(testEmail);
+        
+        if (existingMerchant.isEmpty()) {
             Merchant testMerchant = new Merchant();
-            // Don't set ID - let it auto-generate
-            // testMerchant.setId("55be8400-e29b-41d4-a716-446655440000");
             testMerchant.setName("Test Merchant");
             testMerchant.setEmail(testEmail);
             testMerchant.setApiKey("key_test_abc123");
             testMerchant.setApiSecret("secret_test_xyz789");
             testMerchant.setIsActive(true);
             
-            merchantRepository.save(testMerchant);
-            System.out.println("✅ Test merchant created: " + testEmail);
+            Merchant saved = merchantRepository.save(testMerchant);
+            System.out.println("✅ Test merchant created with ID: " + saved.getId());
+            System.out.println("   Email: " + testEmail);
+            System.out.println("   API Key: key_test_abc123");
+            System.out.println("   API Secret: secret_test_xyz789");
         } else {
-            System.out.println("ℹ️  Test merchant already exists");
+            System.out.println("ℹ️  Test merchant already exists (ID: " + existingMerchant.get().getId() + ")");
+            System.out.println("   Email: " + testEmail);
+            System.out.println("   API Key: key_test_abc123");
+            System.out.println("   API Secret: secret_test_xyz789");
         }
     }
 
@@ -46,6 +53,10 @@ public class MerchantService {
         return merchantRepository.findById(id);
     }
 
+    public Optional<Merchant> findByEmail(String email) {   
+        return merchantRepository.findByEmail(email);
+    }
+    
     public Merchant save(Merchant merchant) {
         return merchantRepository.save(merchant);
     }

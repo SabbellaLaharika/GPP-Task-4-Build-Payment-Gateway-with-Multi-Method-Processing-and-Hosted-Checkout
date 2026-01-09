@@ -18,6 +18,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/payments")
@@ -203,6 +205,63 @@ public class PaymentController {
             response.put("updated_at", payment.getUpdatedAt().toString());
 
             return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ErrorResponse("INTERNAL_ERROR", "An unexpected error occurred"));
+        }
+    }
+    // List All Payments Endpoint (for dashboard)
+    @GetMapping
+    public ResponseEntity<?> listPayments(
+            @RequestHeader("X-Api-Key") String apiKey,
+            @RequestHeader("X-Api-Secret") String apiSecret) {
+        
+        try {
+            // Validate API credentials
+            Optional<Merchant> merchantOpt = merchantService.findByApiKey(apiKey);
+            if (merchantOpt.isEmpty() || !merchantOpt.get().getApiSecret().equals(apiSecret)) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(new ErrorResponse("AUTHENTICATION_ERROR", "Invalid API credentials"));
+            }
+
+            Merchant merchant = merchantOpt.get();
+
+            // Get all payments for this merchant
+            List<Payment> payments = paymentService.findByMerchantId(merchant.getId());
+
+            // Build response list
+            List<Map<String, Object>> responseList = new ArrayList<>();
+            
+            for (Payment payment : payments) {
+                Map<String, Object> paymentData = new HashMap<>();
+                paymentData.put("id", payment.getId());
+                paymentData.put("order_id", payment.getOrder().getId());
+                paymentData.put("merchant_id", merchant.getId());
+                paymentData.put("amount", payment.getAmount());
+                paymentData.put("currency", payment.getCurrency());
+                paymentData.put("method", payment.getMethod());
+                paymentData.put("status", payment.getStatus());
+                
+                if ("upi".equals(payment.getMethod())) {
+                    paymentData.put("vpa", payment.getVpa());
+                } else if ("card".equals(payment.getMethod())) {
+                    paymentData.put("card_network", payment.getCardNetwork());
+                    paymentData.put("card_last4", payment.getCardLast4());
+                }
+                
+                if (payment.getErrorCode() != null) {
+                    paymentData.put("error_code", payment.getErrorCode());
+                    paymentData.put("error_description", payment.getErrorDescription());
+                }
+                
+                paymentData.put("created_at", payment.getCreatedAt().toString());
+                paymentData.put("updated_at", payment.getUpdatedAt().toString());
+                
+                responseList.add(paymentData);
+            }
+
+            return ResponseEntity.ok(responseList);
 
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
