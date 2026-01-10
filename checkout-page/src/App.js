@@ -2,7 +2,10 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './App.css';
 
-const API_BASE_URL = 'http://localhost:8000';
+const API_BASE_URL = window.location.hostname === 'localhost' 
+  ? 'http://localhost:8000'  // Development
+  : '';  // Production (nginx proxy)
+  
 const TEST_MERCHANT = {
   apiKey: 'key_test_abc123',
   apiSecret: 'secret_test_xyz789'

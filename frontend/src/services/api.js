@@ -1,6 +1,8 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:8000';
+const API_BASE_URL = window.location.hostname === 'localhost' 
+  ? 'http://localhost:8000'  // Development
+  : '';  // Production (nginx proxy)
 
 // Test merchant credentials
 export const TEST_MERCHANT = {
