@@ -15,20 +15,20 @@ A complete payment gateway solution with support for UPI and Card payments, feat
 
 ## 📋 Table of Contents
 
-- [Overview](#overview)
-- [Features](#features)
-- [System Architecture](#system-architecture)
-- [Database Schema](#database-schema)
-- [Tech Stack](#tech-stack)
-- [Prerequisites](#prerequisites)
-- [Quick Start](#quick-start)
-- [API Documentation](#api-documentation)
-- [Project Structure](#project-structure)
-- [Configuration](#configuration)
-- [Testing](#testing)
-- [Deployment](#deployment)
-- [Troubleshooting](#troubleshooting)
-- [Contributing](#contributing)
+- [Overview](#-overview)
+- [Features](#-features)
+- [System Architecture](#%EF%B8%8F-system-architecture)
+- [Database Schema](#%EF%B8%8F-database-schema)
+- [Tech Stack](#%EF%B8%8F-tech-stack)
+- [Prerequisites](#-prerequisites)
+- [Quick Start](#-quick-start)
+- [API Documentation](#-api-documentation)
+- [Project Structure](#-project-structure)
+- [Configuration](#%EF%B8%8F-configuration)
+- [Testing](#-testing)
+- [Deployment](#-deployment)
+- [Troubleshooting](#-troubleshooting)
+- [Contributing](#-contributing)
 
 ---
 
@@ -915,7 +915,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 For questions or issues:
 - Create an issue in the [GitHub repository](https://github.com/SabbellaLaharika/GPP-Task-4-Build-Payment-Gateway-with-Multi-Method-Processing-and-Hosted-Checkout/issues)
-- Email: [Your Email]
 
 ---
 
