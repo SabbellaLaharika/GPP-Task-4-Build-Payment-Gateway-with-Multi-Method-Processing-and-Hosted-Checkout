@@ -23,9 +23,7 @@ services:
 
   # Backend API
   backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
+    image: sabbellalaharika/payment-gateway-backend:latest
     container_name: payment_gateway_backend
     ports:
       - "8000:8000"
@@ -49,9 +47,7 @@ services:
 
   # Frontend Dashboard
   frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
+    image: sabbellalaharika/payment-gateway-frontend:latest
     container_name: payment_gateway_frontend
     ports:
       - "3000:3000"
@@ -63,9 +59,7 @@ services:
 
   # Checkout Page
   checkout:
-    build:
-      context: ./checkout-page
-      dockerfile: Dockerfile
+    image: sabbellalaharika/payment-gateway-checkout:latest
     container_name: payment_gateway_checkout
     ports:
       - "3001:3001"
