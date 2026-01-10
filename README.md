@@ -91,7 +91,6 @@ This project is a full-featured payment gateway that allows merchants to accept 
 ---
 
 ## 🏗️ System Architecture
-![System Architecture](docs/images/system-architecture.png)
 ```
 ┌─────────────────────────────────────────────────────────────────┐
 │                         CLIENT LAYER                             │
